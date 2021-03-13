@@ -1,0 +1,93 @@
+Sub Stocks():
+    Dim Ticker As String
+    Dim StockVolume As Double
+    Dim YearStartPrice As Double
+    Dim YearEndPrice As Double
+    Dim YearChange As Double
+    Dim Percent As Double
+    Dim IncreaseTicker As String
+    Dim DecreaseTicker As String
+    Dim GreatestTotalVolumeTicker As String
+    Dim Increase As Double
+    Dim Decrease As Double
+    Dim GreatestTotalVolume As Double
+    
+    Dim SummaryRow As Long
+    SummaryRow = 2
+    
+    StockVolume = 0
+    
+    LastRow = Cells(Rows.Count, 1).End(xlUp).Row
+    
+    YearStartPrice = Cells(2, 3).Value
+    
+    For i = 2 To LastRow
+        If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+            Ticker = Cells(i, 1).Value
+            StockVolume = StockVolume + Cells(i, 7).Value
+            
+             YearEndPrice = Cells(i, 6).Value
+             YearChange = YearEndPrice - YearStartPrice
+             PercentChange = YearChange / YearStartPrice
+            
+            
+            Cells(SummaryRow, 9).Value = Ticker
+            Cells(SummaryRow, 12).Value = StockVolume
+            Cells(SummaryRow, 10).Value = YearChange
+            Cells(SummaryRow, 11).Value = PercentChange
+            Cells(SummaryRow, 11).NumberFormat = "0.00%"
+            
+            SummaryRow = SummaryRow + 1
+            
+            StockVolume = 0
+            YearStartPrice = Cells(i + 1, 3).Value
+            
+        If (PercentChange > Increase) Then
+            Increase = PercentChange
+            IncreaseTicker = Ticker
+            
+            Range("Q2").Value = Increase
+            Range("Q2").NumberFormat = "0.00%"
+            Range("P2").Value = IncreaseTicker
+            
+        ElseIf (PercentChange < Decrease) Then
+            Decrease = PercentChange
+            DecreaseTicker = Ticker
+            
+            Range("Q3").Value = Decrease
+            Range("Q3").NumberFormat = "0.00%"
+            Range("P3").Value = DecreaseTicker
+            
+        End If
+            
+        Else
+            StockVolume = StockVolume + Cells(i, 7).Value
+        End If
+    Next i
+    
+    LastSummaryRow = Cells(Rows.Count, 9).End(xlUp).Row
+    
+    For i = 2 To LastSummaryRow
+         If Cells(i, 10).Value > 0 Then
+            Cells(i, 10).Interior.ColorIndex = 4
+        Else
+            Cells(i, 10).Interior.ColorIndex = 3
+        End If
+    Next i
+    
+    Range("I1").Value = "Ticker"
+    Range("J1").Value = "Yearly Change"
+    Range("K1").Value = "Percent Change"
+    Range("L1").Value = "Total Stock Volume"
+    Columns("I:L").AutoFit
+    
+    Range("O2").Value = "Greatest % Increase"
+    Range("O3").Value = "Greatest % Decrease"
+    Range("O4").Value = "Greatest Total Volume"
+    Columns("O").AutoFit
+    Range("P1").Value = "Ticker"
+    Range("Q1").Value = "Value"
+    Columns("P:Q").AutoFit
+    
+End Sub
+
